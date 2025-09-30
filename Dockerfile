@@ -6,11 +6,14 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y postgresql-client
 
+COPY package*.json ./
+# Instala as dependências
+RUN npm install
+
 # Copia os arquivos do projeto para o container
 COPY . .
 
-# Instala as dependências
-RUN npm install
+RUN npm run build
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
@@ -18,4 +21,4 @@ RUN chmod +x /entrypoint.sh
 # Expõe a porta usada pelo AdonisJS
 EXPOSE 3333
 
-CMD ["/entrypoint.sh"]
+CMD ["sh", "/entrypoint.sh"]
