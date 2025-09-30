@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres-attendance-db:
+    image: postgres:15
+    container_name: postgres-container
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: adonis-app
+    depends_on:
+      - postgres-attendance-db
+    environment:
+      DB_HOST: postgres-attendance-db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+    volumes:
+      - .:/app
+    working_dir: /app
+    ports:
+      - "3333:3333"
+
+volumes:
+  pgdata:
